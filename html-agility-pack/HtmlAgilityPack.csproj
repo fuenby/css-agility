@@ -113,5 +113,11 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\css-agility-pack\CSSAgilityPack.csproj">
+      <Project>{9D91C772-6ABC-4476-BD2C-81307FABD2BC}</Project>
+      <Name>CSSAgilityPack</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

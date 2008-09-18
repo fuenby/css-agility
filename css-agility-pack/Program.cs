@@ -11,10 +11,10 @@ namespace CSSAgilityPack
         {
             CSSStyleSheet c = new CSSStyleSheet();
 
-            Debug.Assert(c.Parse("     \t\n\t   ") != null);
-            Debug.Assert(c.Parse("<!-- -->") != null);
-            Debug.Assert(c.Parse("body {color: red; }") != null);
-            Debug.Assert(c.Parse("body {;;}") != null);
+            Debug.Assert(CSSStyleSheet.Parse("     \t\n\t   ") != null);
+            Debug.Assert(CSSStyleSheet.Parse("<!-- -->") != null);
+            Debug.Assert(CSSStyleSheet.Parse("body {color: red; }") != null);
+            Debug.Assert(CSSStyleSheet.Parse("body {;;}") != null);
         }
     }
 }

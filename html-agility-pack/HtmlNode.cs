@@ -4,6 +4,7 @@ using System.Collections;
 using System.IO;
 using System.Xml;
 using System.Xml.XPath;
+using CSSAgilityPack;
 
 namespace HtmlAgilityPack
 {
@@ -58,6 +59,7 @@ namespace HtmlAgilityPack
 		internal bool _outerchanged = false;
 		internal string _innerhtml;
 		internal string _outerhtml;
+        internal CSSStyleDeclaration _style = null;
 
 		static HtmlNode()
 		{
@@ -1344,6 +1346,22 @@ namespace HtmlAgilityPack
 				return _endnode.Attributes;
 			}
 		}
+
+        /// <summary>
+        /// Gets the CSSStyleDeclaration object associated with the node
+        /// </summary>
+        public CSSStyleDeclaration Style
+        {
+            get 
+            {
+                if (_style == null)
+                {
+                    _style = CSSStyleSheet.ParseStyleDeclaration(Attributes["style"].Value);
+                }
+
+                return _style; 
+            }
+        }
 
 		internal void WriteAttribute(TextWriter outText, HtmlAttribute att)
 		{
