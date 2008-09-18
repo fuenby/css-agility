@@ -139,7 +139,7 @@ namespace CSSAgilityPack
                     break;
             }
 
-            return new CSSStyleDeclaration(decls);
+            return new CSSStyleDeclaration(text_.Substring(mark, pos_ - mark), decls);
         }
 
         CSSDeclaration ParseDeclaration()
@@ -234,10 +234,38 @@ namespace CSSAgilityPack
     public class CSSStyleDeclaration
     {
         List<CSSDeclaration> decls_;
+        string cssText_;
 
-        public CSSStyleDeclaration(List<CSSDeclaration> decls)
+        public CSSStyleDeclaration(string cssText, List<CSSDeclaration> decls)
         {
+            cssText_ = cssText;
             decls_ = decls;
+        }
+
+        public string CssText
+        {
+            get
+            {
+                return cssText_;
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public int Count
+        {
+            get { return decls_.Count; }
+        }
+
+        public string this[int index]
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set { throw new NotImplementedException(); }
         }
     }
 
