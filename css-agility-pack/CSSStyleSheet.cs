@@ -77,7 +77,7 @@ namespace CSSAgilityPack
                 return null;
             }
 
-            CSSBlock b = ParseBlock();
+            CSSStyleDeclaration b = ParseStyleDeclaration();
             if (b == null)
             {
                 pos_ = mark;
@@ -123,7 +123,7 @@ namespace CSSAgilityPack
             return result.ToString();
         }
 
-        public CSSBlock ParseBlock()
+        public CSSStyleDeclaration ParseStyleDeclaration()
         {
             int mark = pos_;
 
@@ -139,7 +139,7 @@ namespace CSSAgilityPack
                     break;
             }
 
-            return new CSSBlock(decls);
+            return new CSSStyleDeclaration(decls);
         }
 
         CSSDeclaration ParseDeclaration()
@@ -231,11 +231,11 @@ namespace CSSAgilityPack
         public static Token Valid = new Token();
     };
 
-    public class CSSBlock
+    public class CSSStyleDeclaration
     {
         List<CSSDeclaration> decls_;
 
-        public CSSBlock(List<CSSDeclaration> decls)
+        public CSSStyleDeclaration(List<CSSDeclaration> decls)
         {
             decls_ = decls;
         }
@@ -243,14 +243,14 @@ namespace CSSAgilityPack
 
     public class CSSRule
     {
-        public CSSRule(List<string> selectors, CSSBlock block)
+        public CSSRule(List<string> selectors, CSSStyleDeclaration block)
         {
             selectors_ = selectors;
             block_ = block;
         }
 
         List<string> selectors_;
-        CSSBlock block_;
+        CSSStyleDeclaration block_;
     }
 
     public class CSSDeclaration
