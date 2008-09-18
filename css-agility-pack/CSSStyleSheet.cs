@@ -15,214 +15,220 @@ namespace CSSAgilityPack
         void Load(StreamReader r)
         {
             text_ = r.ReadToEnd();
+            int pos = 0, len = text_.Length;
 
-            Parse();
+            Parse(text_, ref pos, ref len);
         }
 
         public string text_;
         public int pos_;
 
-        public List<CSSRule> Parse(string what)
+        public static List<CSSRule> Parse(string what)
         {
-            text_ = what; pos_ = 0;
-            return Parse();
+            int pos = 0, end = what.Length;
+            return Parse(what, ref pos, ref end);
         }
 
-        public List<CSSRule> Parse()
+        public static List<CSSRule> Parse(string what, ref int pos, ref int end)
         {
             var result = new List<CSSRule>();
 
-            pos_ = 0;
-            while (pos_ < text_.Length)
+            pos = 0;
+            while (pos < end)
             {
-                CSSRule r = ParseRule();
+                CSSRule r = ParseRule(what, ref pos, ref end);
                 if (r != null)
                 {
                     result.Add(r);
                     continue;
                 }
                 
-                if (AcceptCDO())
+                if (AcceptCDO(what, ref pos, ref end))
                     continue;
 
-                if (AcceptCDC())
+                if (AcceptCDC(what, ref pos, ref end))
                     continue;
 
-                AcceptWhitespace();
+                AcceptWhitespace(what, ref pos, ref end);
             }
 
             return result;
         }
 
-        public CSSRule ParseRule()
+        public static CSSRule ParseRule(string what, ref int pos, ref int end)
         {
-            int mark = pos_;
+            int mark = pos;
 
             List<string> selectors = new List<string>();
 
-            string s = ParseSelector();
+            string s = ParseSelector(what, ref pos, ref end);
             while (s != null)
             {
                 selectors.Add(s);
-                s = ParseSelector();
+                s = ParseSelector(what, ref pos, ref end);
             }
             if (selectors.Count == 0)
                 return null;
 
-            AcceptWhitespace();
+            AcceptWhitespace(what, ref pos, ref end);
 
-            if (!AcceptChar('{'))
+            if (!AcceptChar('{', what, ref pos, ref end))
             {
-                pos_ = mark;
+                pos = mark;
                 return null;
             }
 
-            CSSStyleDeclaration b = ParseStyleDeclaration();
+            CSSStyleDeclaration b = ParseStyleDeclaration(what, ref pos, ref end);
             if (b == null)
             {
-                pos_ = mark;
+                pos = mark;
                 return null;
             }
 
-            AcceptWhitespace();
-            if (!AcceptChar('}'))
+            AcceptWhitespace(what, ref pos, ref end);
+            if (!AcceptChar('}', what, ref pos, ref end))
             {
-                pos_ = mark;
+                pos = mark;
                 return null;
             }
             
             return new CSSRule(selectors, b);
         }
 
-        public string ParseSelector()
+        public static string ParseSelector(string what, ref int pos, ref int end)
         {
-            return ParseWord();
+            return ParseWord(what, ref pos, ref end);
         }
 
-        public string ParseWord()
+        public static string ParseWord(string what, ref int pos, ref int end)
         {
-            int mark = pos_;
+            int mark = pos;
             StringBuilder result = new StringBuilder();
 
-            AcceptWhitespace();
-            while (pos_ < text_.Length)
+            AcceptWhitespace(what, ref pos, ref end);
+            while (pos < end)
             {
-                if (!char.IsLetterOrDigit(text_[pos_]))
+                if (!char.IsLetterOrDigit(what[pos]))
                     break;
 
-                result.Append(text_[pos_++]);
+                result.Append(what[pos++]);
             }
-            AcceptWhitespace();
+            AcceptWhitespace(what, ref pos, ref end);
 
             if (result.Length == 0)
             {
-                pos_ = mark;
+                pos = mark;
                 return null;
             }
 
             return result.ToString();
         }
 
-        public CSSStyleDeclaration ParseStyleDeclaration()
+        public static CSSStyleDeclaration ParseStyleDeclaration(string what)
         {
-            int mark = pos_;
+            int pos = 0;
+            int end = what.Length;
+            return ParseStyleDeclaration(what, ref pos, ref end);
+        }
+
+        public static CSSStyleDeclaration ParseStyleDeclaration(string what, ref int pos, ref int end)
+        {
+            int mark = pos;
 
             var decls = new List<CSSDeclaration>();
 
             while (true)
             {
-                var decl = ParseDeclaration();
+                var decl = ParseDeclaration(what, ref pos, ref end);
                 if (decl != null)
                     decls.Add(decl);
 
-                if (!AcceptChar(';'))
+                if (!AcceptChar(';', what, ref pos, ref end))
                     break;
             }
 
-            return new CSSStyleDeclaration(text_.Substring(mark, pos_ - mark), decls);
+            return new CSSStyleDeclaration(what.Substring(mark, pos - mark), decls);
         }
 
-        CSSDeclaration ParseDeclaration()
+        public static CSSDeclaration ParseDeclaration(string what, ref int pos, ref int end)
         {
-            int mark = pos_;
+            int mark = pos;
 
-            string attr = ParseAttribute();
+            string attr = ParseAttribute(what, ref pos, ref end);
             if (attr == null)
             {
-                pos_ = mark;
+                pos = mark;
                 return null;
             }
 
-            if (!AcceptChar(':'))
+            if (!AcceptChar(':', what, ref pos, ref end))
             {
-                pos_ = mark;
+                pos = mark;
                 return null;
             }
 
-            string value = ParseValue();
+            string value = ParseValue(what, ref pos, ref end);
             if (value == null)
             {
-                pos_ = mark;
+                pos = mark;
                 return null;
             }
 
             return new CSSDeclaration(attr, value);
         }
 
-        string ParseAttribute()
+        static string ParseAttribute(string what, ref int pos, ref int end)
         {
-            return ParseWord();
+            return ParseWord(what, ref pos, ref end);
         }
 
-        string ParseValue()
+        static string ParseValue(string what, ref int pos, ref int end)
         {
-            return ParseWord();
+            return ParseWord(what, ref pos, ref end);
         }
 
-        public bool AcceptCDO()
+        static public bool AcceptCDO(string what, ref int pos, ref int end)
         {
-            return AcceptString("<!--");
+            return AcceptString("<!--", what, ref pos, ref end);
         }
 
-        public bool AcceptCDC()
+        static public bool AcceptCDC(string what, ref int pos, ref int end)
         {
-            return AcceptString("-->");
+            return AcceptString("-->", what, ref pos, ref end);
         }
 
-        public bool AcceptString(string what)
+        static public bool AcceptString(string s, string what, ref int pos, ref int end)
         {
-            int mark = pos_;
+            int mark = pos;
 
             int i = 0;
-            while (pos_ < text_.Length && i < what.Length && text_[pos_] == what[i])
+            while (pos < end && i < s.Length && what[pos] == s[i])
             {
-                pos_++; i++;
+                pos++; i++;
             }
 
-            if (i == what.Length)
+            if (i == s.Length)
                 return true;
 
-            pos_ = mark;
+            pos = mark;
             return false;
         }
 
-        public bool AcceptChar(char ch)
+        public static bool AcceptChar(char ch, string what, ref int pos, ref int end)
         {
-            if (pos_ < text_.Length && text_[pos_] == ch)
+            if (pos < end && what[pos] == ch)
             {
-                pos_++;
+                pos++;
                 return true;
             }
 
             return false;
         }
 
-        public void AcceptWhitespace()
+        public static void AcceptWhitespace(string what, ref int pos, ref int end)
         {
-            while (pos_ < text_.Length && char.IsWhiteSpace(text_[pos_]))
-            {
-               pos_++;
-            }
+            while (pos < end && char.IsWhiteSpace(what[pos]))
+               pos++;
         }
     }
 
