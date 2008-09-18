@@ -1356,10 +1356,11 @@ namespace HtmlAgilityPack
             {
                 if (_style == null)
                 {
-                    _style = CSSStyleSheet.ParseStyleDeclaration(Attributes["style"].Value);
+                    string style = (Attributes["style"] == null) ? "" : Attributes["style"].Value;
+                    _style = CSSStyleSheet.ParseStyleDeclaration(style);
                 }
 
-                return _style; 
+                return _style;
             }
         }
 

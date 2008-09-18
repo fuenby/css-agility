@@ -135,7 +135,7 @@ namespace CSSAgilityPack
         {
             int mark = pos;
 
-            var decls = new List<CSSDeclaration>();
+            var decls = new List<CSSProp>();
 
             while (true)
             {
@@ -150,7 +150,7 @@ namespace CSSAgilityPack
             return new CSSStyleDeclaration(what.Substring(mark, pos - mark), decls);
         }
 
-        public static CSSDeclaration ParseDeclaration(string what, ref int pos, ref int end)
+        public static CSSProp ParseDeclaration(string what, ref int pos, ref int end)
         {
             int mark = pos;
 
@@ -174,7 +174,7 @@ namespace CSSAgilityPack
                 return null;
             }
 
-            return new CSSDeclaration(attr, value);
+            return new CSSProp(attr, value);
         }
 
         static string ParseAttribute(string what, ref int pos, ref int end)
@@ -239,10 +239,10 @@ namespace CSSAgilityPack
 
     public class CSSStyleDeclaration
     {
-        List<CSSDeclaration> decls_;
+        List<CSSProp> decls_;
         string cssText_;
 
-        public CSSStyleDeclaration(string cssText, List<CSSDeclaration> decls)
+        public CSSStyleDeclaration(string cssText, List<CSSProp> decls)
         {
             cssText_ = cssText;
             decls_ = decls;
@@ -267,11 +267,15 @@ namespace CSSAgilityPack
 
         public string this[int index]
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set { throw new NotImplementedException(); }
+            get { return decls_[index].Name; }
+        }
+
+        public string GetPropertyValue(string propertyName)
+        {
+            foreach (CSSProp decl in decls_)
+                if (decl.Name == propertyName)
+                    return decl.Value;
+            return string.Empty;
         }
     }
 
@@ -287,14 +291,17 @@ namespace CSSAgilityPack
         CSSStyleDeclaration block_;
     }
 
-    public class CSSDeclaration
+    public class CSSProp
     {
         string attr_, value_;
 
-        public CSSDeclaration(string attr, string value)
+        public CSSProp(string attr, string value)
         {
             attr_ = attr;
             value_ = value;
         }
+
+        public string Name { get { return attr_; } }
+        public string Value { get { return value_; } }
     }
 }
