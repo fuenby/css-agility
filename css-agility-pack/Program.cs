@@ -9,8 +9,6 @@ namespace CSSAgilityPack
     {
         static void Main(string[] args)
         {
-            CSSStyleSheet c = new CSSStyleSheet();
-
             Debug.Assert(CSSStyleSheet.Parse("     \t\n\t   ") != null);
             Debug.Assert(CSSStyleSheet.Parse("<!-- -->") != null);
             Debug.Assert(CSSStyleSheet.Parse("body {color: red; }") != null);

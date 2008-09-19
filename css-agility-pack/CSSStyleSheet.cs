@@ -7,29 +7,40 @@ namespace CSSAgilityPack
 {
     public class CSSStyleSheet
     {
-        void Load(string fileName)
+        List<CSSRule> rules_;
+
+        List<CSSRule> CssRules
         {
-            Load(new StreamReader(fileName));
+            get { return rules_; }
         }
 
-        void Load(StreamReader r)
+        public CSSStyleSheet(List<CSSRule> rules)
         {
-            text_ = r.ReadToEnd();
-            int pos = 0, len = text_.Length;
-
-            Parse(text_, ref pos, ref len);
+            rules_ = rules;
         }
 
-        public string text_;
-        public int pos_;
+        CSSStyleSheet Load(string fileName)
+        {
+            return Load(new StreamReader(fileName));
+        }
 
-        public static List<CSSRule> Parse(string what)
+        CSSStyleSheet Load(StreamReader r)
+        {
+            string text = r.ReadToEnd();
+            int pos = 0, len = text.Length;
+
+            return Parse(text, ref pos, ref len);
+        }
+
+        #region Parsing
+
+        public static CSSStyleSheet Parse(string what)
         {
             int pos = 0, end = what.Length;
             return Parse(what, ref pos, ref end);
         }
 
-        public static List<CSSRule> Parse(string what, ref int pos, ref int end)
+        public static CSSStyleSheet Parse(string what, ref int pos, ref int end)
         {
             var result = new List<CSSRule>();
 
@@ -52,7 +63,7 @@ namespace CSSAgilityPack
                 AcceptWhitespace(what, ref pos, ref end);
             }
 
-            return result;
+            return new CSSStyleSheet(result);
         }
 
         public static CSSRule ParseRule(string what, ref int pos, ref int end)
@@ -230,53 +241,9 @@ namespace CSSAgilityPack
             while (pos < end && char.IsWhiteSpace(what[pos]))
                pos++;
         }
-    }
 
-    public class Token
-    {
-        public static Token Valid = new Token();
-    };
+        #endregion
 
-    public class CSSStyleDeclaration
-    {
-        List<CSSProp> decls_;
-        string cssText_;
-
-        public CSSStyleDeclaration(string cssText, List<CSSProp> decls)
-        {
-            cssText_ = cssText;
-            decls_ = decls;
-        }
-
-        public string CssText
-        {
-            get
-            {
-                return cssText_;
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public int Count
-        {
-            get { return decls_.Count; }
-        }
-
-        public string this[int index]
-        {
-            get { return decls_[index].Name; }
-        }
-
-        public string GetPropertyValue(string propertyName)
-        {
-            foreach (CSSProp decl in decls_)
-                if (decl.Name == propertyName)
-                    return decl.Value;
-            return string.Empty;
-        }
     }
 
     public class CSSRule
