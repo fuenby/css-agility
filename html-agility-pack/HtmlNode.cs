@@ -1357,7 +1357,7 @@ namespace HtmlAgilityPack
                 if (_style == null)
                 {
                     string style = (Attributes["style"] == null) ? "" : Attributes["style"].Value;
-                    _style = CSSStyleSheet.ParseStyleDeclaration(style);
+                    _style = CSSParser.ParseStyleDeclaration(style);
                 }
 
                 return _style;
