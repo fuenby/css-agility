@@ -103,7 +103,7 @@ namespace CSSAgilityPack
                 return null;
             }
             
-            return new CSSRule(selectors, b);
+            return new CSSStyleRule(selectors, b);
         }
 
         public static string ParseSelector(string what, ref int pos, ref int end)
@@ -248,11 +248,31 @@ namespace CSSAgilityPack
 
     public class CSSRule
     {
-        public CSSRule(List<string> selectors, CSSStyleDeclaration block)
+        public enum RuleType { UNKNOWN_RULE = 0, STYLE_RULE, CHARSET_RULE, IMPORT_RULE, MEDIA_RULE, FONT_FACE_RULE, PAGE_RULE };
+
+        public CSSRule()
+        {
+            type_ = RuleType.UNKNOWN_RULE;
+        }
+
+        public RuleType Type
+        {
+            get { return type_; }
+        }
+
+        protected RuleType type_;
+    }
+
+    public class CSSStyleRule : CSSRule
+    {
+        public CSSStyleRule(List<string> selectors, CSSStyleDeclaration block)
         {
             selectors_ = selectors;
             block_ = block;
+            type_ = RuleType.STYLE_RULE;
         }
+
+        public string SelectorText { get { return String.Join(" ", selectors_.ToArray()); } }
 
         List<string> selectors_;
         CSSStyleDeclaration block_;

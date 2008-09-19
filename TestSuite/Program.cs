@@ -18,7 +18,8 @@ namespace TestSuite
                 d.Load("test.html");
                 HtmlNode p = d.GetElementbyId("test1");
                 CSSStyleDeclaration s = p.Style;
-                //Console.WriteLine(s.GetPropertyValue("color"));
+
+                Console.WriteLine(s.GetPropertyValue("color"));
             }
             catch (Exception ex)
             {
