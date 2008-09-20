@@ -66,6 +66,15 @@ namespace TestSuite
         }
 
         [Test]
+        public void MultipleSelectors()
+        {
+            CSSRule d = CSSParser.ParseRule("div#mine p span { font-weight: bold; }");
+
+            Assert.AreEqual(CSSRule.RuleType.STYLE_RULE, d.Type);
+            CSSStyleRule sr = d as CSSStyleRule;
+        }
+
+        [Test]
         public void HtmlStyles()
         {
             HtmlDocument d = new HtmlDocument();
@@ -79,7 +88,7 @@ namespace TestSuite
 
         public static void Main(string[] args)
         {
-            CSSStyleDeclaration s = CSSParser.ParseStyleDeclaration("font-size: x-large; height: 80%; line-height: 12.7em; ");
+            CSSStyleDeclaration s = CSSParser.ParseStyleDeclaration("div#mine p .test span { font-weight: bold; }");
             for (int i = 0; i < s.Count; ++i)
                 Console.WriteLine("{0}: {1}", s[i], s.GetPropertyValue(s[i]));
 

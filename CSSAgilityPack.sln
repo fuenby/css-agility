@@ -11,6 +11,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSuite", "TestSuite\Test
 		{9D91C772-6ABC-4476-BD2C-81307FABD2BC} = {9D91C772-6ABC-4476-BD2C-81307FABD2BC}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugApp", "DebugApp\DebugApp.csproj", "{C67DE72F-C137-43A0-AEE7-2C1E7DCAC20C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{193BB801-054F-4729-9D5D-FCE1E32594BF} = {193BB801-054F-4729-9D5D-FCE1E32594BF}
+		{9D91C772-6ABC-4476-BD2C-81307FABD2BC} = {9D91C772-6ABC-4476-BD2C-81307FABD2BC}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +35,10 @@ Global
 		{455BB9AF-88EF-4046-8411-05128F79EC0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{455BB9AF-88EF-4046-8411-05128F79EC0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{455BB9AF-88EF-4046-8411-05128F79EC0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C67DE72F-C137-43A0-AEE7-2C1E7DCAC20C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C67DE72F-C137-43A0-AEE7-2C1E7DCAC20C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C67DE72F-C137-43A0-AEE7-2C1E7DCAC20C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C67DE72F-C137-43A0-AEE7-2C1E7DCAC20C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -87,7 +87,7 @@ namespace CSSAgilityPack
 
         public static string ParseSelector(string what, ref int pos)
         {
-            return ParseIdent(what, ref pos);
+            return ParseAny(what, ref pos);
         }
 
         public static CSSStyleDeclaration ParseStyleDeclaration(string what)
@@ -178,6 +178,7 @@ namespace CSSAgilityPack
         {
             string result = ParseIdent(what, ref pos)
                 ?? ParseString(what, ref pos)
+                ?? ParseHash(what, ref pos)
                 ?? ParsePercentage(what, ref pos)
                 ?? ParseDimension(what, ref pos)
                 ?? ParseNumber(what, ref pos);
@@ -187,7 +188,41 @@ namespace CSSAgilityPack
             return result;
         }
 
-        public static string ParseIdent(string what, ref int pos)
+        private static string ParseHash(string what, ref int pos)
+        {
+            int ps = pos;
+            StringBuilder result = new StringBuilder();
+
+            if (!AcceptChar('#', what, ref ps))
+                return null;
+            result.Append('#');
+
+            string name = ParseName(what, ref ps);
+            if (name == null)
+                return null;
+
+            result.Append(name);
+            pos = ps;
+            return result.ToString();
+        }
+
+        static string ParseName(string what, ref int pos)
+        {
+            int ps = pos;
+            StringBuilder result = new StringBuilder();
+
+            if (!AcceptNmchar(what, ref ps))
+                return null;
+            result.Append(what[ps - 1]);
+
+            while (AcceptNmchar(what, ref ps))
+                result.Append(what[ps - 1]);
+
+            pos = ps;
+            return result.ToString();
+        }
+
+        static string ParseIdent(string what, ref int pos)
         {
             int ps = pos;
             StringBuilder result = new StringBuilder();
@@ -206,7 +241,7 @@ namespace CSSAgilityPack
             return result.ToString();
         }
 
-        public static string ParseString(string what, ref int pos)
+        static string ParseString(string what, ref int pos)
         {
             int mark = pos;
             StringBuilder result = new StringBuilder();
@@ -298,12 +333,6 @@ namespace CSSAgilityPack
             pos = ps;
             return result.ToString();
         }
-
-        //static string ParseDimension(string what, ref int pos)
-        //{
-        //    int ps = pos;
-
-        //}
 
         static bool AcceptNmstart(string what, ref int pos)
         {
