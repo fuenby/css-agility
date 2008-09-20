@@ -9,9 +9,14 @@ namespace CSSAgilityPack
     {
         List<CSSRule> rules_;
 
-        List<CSSRule> CssRules
+        public List<CSSRule> CssRules
         {
             get { return rules_; }
+        }
+
+        public CSSRule OwnerRule
+        {
+            get { return null; }
         }
 
         public CSSStyleSheet(List<CSSRule> rules)

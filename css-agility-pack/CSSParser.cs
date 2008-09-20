@@ -20,41 +20,47 @@ namespace CSSAgilityPack
             pos = 0;
             while (pos < end)
             {
-                CSSRule r = ParseRule(what, ref pos, ref end);
+                CSSRule r = ParseRule(what, ref pos);
                 if (r != null)
                 {
                     result.Add(r);
                     continue;
                 }
 
-                if (AcceptCDO(what, ref pos, ref end))
+                if (AcceptCDO(what, ref pos))
                     continue;
 
-                if (AcceptCDC(what, ref pos, ref end))
+                if (AcceptCDC(what, ref pos))
                     continue;
 
-                AcceptWhitespace(what, ref pos, ref end);
+                AcceptWhitespace(what, ref pos);
             }
 
             return new CSSStyleSheet(result);
         }
 
-        public static CSSRule ParseRule(string what, ref int pos, ref int end)
+        public static CSSRule ParseRule(string what)
+        {
+            int pos = 0;
+            return ParseRule(what, ref pos);
+        }
+
+        public static CSSRule ParseRule(string what, ref int pos)
         {
             int mark = pos;
 
             List<string> selectors = new List<string>();
 
-            string s = ParseSelector(what, ref pos, ref end);
+            string s = ParseSelector(what, ref pos);
             while (s != null)
             {
                 selectors.Add(s);
-                s = ParseSelector(what, ref pos, ref end);
+                s = ParseSelector(what, ref pos);
             }
             if (selectors.Count == 0)
                 return null;
 
-            AcceptWhitespace(what, ref pos, ref end);
+            AcceptWhitespace(what, ref pos);
 
             if (!AcceptChar('{', what, ref pos))
             {
@@ -62,14 +68,14 @@ namespace CSSAgilityPack
                 return null;
             }
 
-            CSSStyleDeclaration b = ParseStyleDeclaration(what, ref pos, ref end);
+            CSSStyleDeclaration b = ParseStyleDeclaration(what, ref pos);
             if (b == null)
             {
                 pos = mark;
                 return null;
             }
 
-            AcceptWhitespace(what, ref pos, ref end);
+            AcceptWhitespace(what, ref pos);
             if (!AcceptChar('}', what, ref pos))
             {
                 pos = mark;
@@ -79,19 +85,19 @@ namespace CSSAgilityPack
             return new CSSStyleRule(selectors, b);
         }
 
-        public static string ParseSelector(string what, ref int pos, ref int end)
+        public static string ParseSelector(string what, ref int pos)
         {
-            return ParseIdent(what, ref pos, ref end);
+            return ParseIdent(what, ref pos);
         }
 
         public static CSSStyleDeclaration ParseStyleDeclaration(string what)
         {
             int pos = 0;
             int end = what.Length;
-            return ParseStyleDeclaration(what, ref pos, ref end);
+            return ParseStyleDeclaration(what, ref pos);
         }
 
-        public static CSSStyleDeclaration ParseStyleDeclaration(string what, ref int pos, ref int end)
+        public static CSSStyleDeclaration ParseStyleDeclaration(string what, ref int pos)
         {
             int mark = pos;
 
@@ -99,7 +105,7 @@ namespace CSSAgilityPack
 
             while (true)
             {
-                var decl = ParseDeclaration(what, ref pos, ref end);
+                var decl = ParseDeclaration(what, ref pos);
                 if (decl != null)
                     decls.Add(decl);
 
@@ -110,20 +116,20 @@ namespace CSSAgilityPack
             return new CSSStyleDeclaration(what.Substring(mark, pos - mark), decls);
         }
 
-        public static CSSProp ParseDeclaration(string what, ref int pos, ref int end)
+        public static CSSProp ParseDeclaration(string what, ref int pos)
         {
             int mark = pos;
 
-            AcceptWhitespace(what, ref pos, ref end);
+            AcceptWhitespace(what, ref pos);
 
-            string attr = ParseProperty(what, ref pos, ref end);
+            string attr = ParseProperty(what, ref pos);
             if (attr == null)
             {
                 pos = mark;
                 return null;
             }
 
-            AcceptWhitespace(what, ref pos, ref end);
+            AcceptWhitespace(what, ref pos);
 
             if (!AcceptChar(':', what, ref pos))
             {
@@ -131,9 +137,9 @@ namespace CSSAgilityPack
                 return null;
             }
 
-            AcceptWhitespace(what, ref pos, ref end);
+            AcceptWhitespace(what, ref pos);
 
-            string value = ParseValue(what, ref pos, ref end);
+            string value = ParseValue(what, ref pos);
             if (value == null)
             {
                 pos = mark;
@@ -143,18 +149,18 @@ namespace CSSAgilityPack
             return new CSSProp(attr, value);
         }
 
-        static string ParseProperty(string what, ref int pos, ref int end)
+        static string ParseProperty(string what, ref int pos)
         {
-            return ParseIdent(what, ref pos, ref end);
+            return ParseIdent(what, ref pos);
         }
 
-        static string ParseValue(string what, ref int pos, ref int end)
+        static string ParseValue(string what, ref int pos)
         {
             StringBuilder result = new StringBuilder();
 
             while (true)
             {
-                string t = ParseAny(what, ref pos, ref end);
+                string t = ParseAny(what, ref pos);
                 if (t != null)
                 {
                     if (result.Length != 0)
@@ -168,20 +174,20 @@ namespace CSSAgilityPack
             return result.ToString();
         }
 
-        static string ParseAny(string what, ref int pos, ref int end)
+        static string ParseAny(string what, ref int pos)
         {
-            string result = ParseIdent(what, ref pos, ref end)
-                ?? ParseString(what, ref pos, ref end)
-                ?? ParsePercentage(what, ref pos, ref end)
+            string result = ParseIdent(what, ref pos)
+                ?? ParseString(what, ref pos)
+                ?? ParsePercentage(what, ref pos)
                 ?? ParseDimension(what, ref pos)
                 ?? ParseNumber(what, ref pos);
             if (result != null)
-                AcceptWhitespace(what, ref pos, ref end);
+                AcceptWhitespace(what, ref pos);
 
             return result;
         }
 
-        public static string ParseIdent(string what, ref int pos, ref int end)
+        public static string ParseIdent(string what, ref int pos)
         {
             int ps = pos;
             StringBuilder result = new StringBuilder();
@@ -189,23 +195,23 @@ namespace CSSAgilityPack
             if (AcceptChar('-', what, ref ps))
                 result.Append('-');
 
-            if (!AcceptNmstart(what, ref ps, ref end))
+            if (!AcceptNmstart(what, ref ps))
                 return null;
             result.Append(what[ps - 1]);
 
-            while (AcceptNmchar(what, ref ps, ref end))
+            while (AcceptNmchar(what, ref ps))
                 result.Append(what[ps - 1]);
 
             pos = ps;
             return result.ToString();
         }
 
-        public static string ParseString(string what, ref int pos, ref int end)
+        public static string ParseString(string what, ref int pos)
         {
             int mark = pos;
             StringBuilder result = new StringBuilder();
 
-            if (pos >= end)
+            if (pos >= what.Length)
                 return null;
 
             char sep = what[pos];
@@ -215,7 +221,7 @@ namespace CSSAgilityPack
             AcceptChar(sep, what, ref pos);
             
             result.Append(sep);
-            while (pos < end && "\n\t\r".IndexOf(what[pos]) < 0 && what[pos] != sep)
+            while (pos < what.Length && "\n\r".IndexOf(what[pos]) < 0 && what[pos] != sep)
             {
                 result.Append(what[pos++]);
             }
@@ -241,7 +247,7 @@ namespace CSSAgilityPack
                 return null;
             result.Append(num);
 
-            string dim = ParseIdent(what, ref ps, ref en);
+            string dim = ParseIdent(what, ref ps);
             if (dim == null)
                 return null;
             result.Append(dim);
@@ -250,12 +256,12 @@ namespace CSSAgilityPack
             return result.ToString();
         }
 
-        static string ParsePercentage(string what, ref int pos, ref int end)
+        static string ParsePercentage(string what, ref int pos)
         {
             int ps = pos;
             StringBuilder result = new StringBuilder();
 
-            while (ps < end && char.IsDigit(what[ps]))
+            while (ps < what.Length && char.IsDigit(what[ps]))
                 result.Append(what[ps++]);
 
             if (result.Length == 0)
@@ -299,12 +305,12 @@ namespace CSSAgilityPack
 
         //}
 
-        static bool AcceptNmstart(string what, ref int pos, ref int end)
+        static bool AcceptNmstart(string what, ref int pos)
         {
             return AcceptEither("_a-z", what, ref pos);
         }
 
-        static bool AcceptNmchar(string what, ref int pos, ref int end)
+        static bool AcceptNmchar(string what, ref int pos)
         {
             return AcceptEither("-_a-z", what, ref pos);
         }
@@ -337,22 +343,22 @@ namespace CSSAgilityPack
             return false;
         }
 
-        static public bool AcceptCDO(string what, ref int pos, ref int end)
+        static public bool AcceptCDO(string what, ref int pos)
         {
-            return AcceptString("<!--", what, ref pos, ref end);
+            return AcceptString("<!--", what, ref pos);
         }
 
-        static public bool AcceptCDC(string what, ref int pos, ref int end)
+        static public bool AcceptCDC(string what, ref int pos)
         {
-            return AcceptString("-->", what, ref pos, ref end);
+            return AcceptString("-->", what, ref pos);
         }
 
-        static public bool AcceptString(string s, string what, ref int pos, ref int end)
+        static public bool AcceptString(string s, string what, ref int pos)
         {
             int mark = pos;
 
             int i = 0;
-            while (pos < end && i < s.Length && what[pos] == s[i])
+            while (pos < what.Length && i < s.Length && what[pos] == s[i])
             {
                 pos++; i++;
             }
@@ -375,9 +381,9 @@ namespace CSSAgilityPack
             return false;
         }
 
-        public static void AcceptWhitespace(string what, ref int pos, ref int end)
+        public static void AcceptWhitespace(string what, ref int pos)
         {
-            while (pos < end && char.IsWhiteSpace(what[pos]))
+            while (pos < what.Length && char.IsWhiteSpace(what[pos]))
                 pos++;
         }
     }
