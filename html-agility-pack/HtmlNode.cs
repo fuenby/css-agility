@@ -59,7 +59,7 @@ namespace HtmlAgilityPack
 		internal bool _outerchanged = false;
 		internal string _innerhtml;
 		internal string _outerhtml;
-        internal CSSStyleDeclaration _style = null;
+		internal CSSStyleDeclaration _style = null;
 
 		static HtmlNode()
 		{
@@ -1347,26 +1347,49 @@ namespace HtmlAgilityPack
 			}
 		}
 
-        /// <summary>
-        /// Gets the CSSStyleDeclaration object associated with the node
-        /// </summary>
-        public CSSStyleDeclaration Style
-        {
-            get 
-            {
-                if (_style == null)
-                {
-                    string style = (Attributes["style"] == null) ? "" : Attributes["style"].Value;
-                    _style = CSSParser.ParseStyleDeclaration(style);
-                }
+		/// <summary>
+		/// Gets the CSSStyleDeclaration object associated with the node
+		/// </summary>
+		public CSSStyleDeclaration Style
+		{
+			get
+			{
+				if (_style == null)
+				{
+					string style = (Attributes["style"] == null) ? "" : Attributes["style"].Value;
+					_style = CSSParser.ParseStyleDeclaration(style);
+				}
 
-                return _style;
-            }
-        }
+				if (Attributes["style"] == null)
+				{
+					HtmlAttribute styleAttr = new HtmlAttribute(this.OwnerDocument);
+					styleAttr.Name = "style";
+					styleAttr.Value = _style.CssText;
+					Attributes.Append(styleAttr);
+				}
+
+				return _style;
+			}
+		}
+
+		/// <summary>
+		/// Gets the class name(s) associated with the node.
+		/// </summary>
+		/// <value>A string containing the class name(s), or null when the class is not set</value>
+		public string ClassName
+		{
+			get
+			{
+				if (Attributes.GetAttributeIndex("class") != -1)
+					return Attributes["class"].Value.Trim();
+
+				return null;
+			}
+		}
 
 		internal void WriteAttribute(TextWriter outText, HtmlAttribute att)
 		{
-			string name;
+			string name, value;
 
 			if (_ownerdocument.OptionOutputAsXml)
 			{
@@ -1379,7 +1402,12 @@ namespace HtmlAgilityPack
 					name = att.XmlName;
 				}
 
-				outText.Write(" " + name + "=\"" + HtmlDocument.HtmlEncode(att.XmlValue) + "\"");
+				value = att.XmlValue;
+				if (name.ToLower() == "style") 
+				{
+					value = Style.CssText;
+				}
+				outText.Write(" " + name + "=\"" + HtmlDocument.HtmlEncode(value) + "\"");
 			}
 			else
 			{
@@ -1401,20 +1429,26 @@ namespace HtmlAgilityPack
 						return;
 					}
 				}
+
+				value = att.Value;
+				if (name.ToLower() == "style") 
+				{
+					value = Style.CssText;
+				}
 				if (_ownerdocument.OptionOutputOptimizeAttributeValues)
 				{
 					if (att.Value.IndexOfAny(new Char[]{(char)10, (char)13, (char)9, ' '}) < 0)
 					{
-						outText.Write(" " + name + "=" + att.Value);
+						outText.Write(" " + name + "=" + value);
 					}
 					else
 					{
-						outText.Write(" " + name + "=\"" + att.Value + "\"");
+						outText.Write(" " + name + "=\"" + value + "\"");
 					}
 				}
 				else
 				{
-					outText.Write(" " + name + "=\"" + att.Value + "\"");
+					outText.Write(" " + name + "=\"" + value + "\"");
 				}
 			}
 		}

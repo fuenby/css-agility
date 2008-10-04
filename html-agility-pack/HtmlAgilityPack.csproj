@@ -75,6 +75,7 @@
     <Compile Include="HtmlNodeType.cs" />
     <Compile Include="HtmlParseError.cs" />
     <Compile Include="HtmlParseErrorCode.cs" />
+    <Compile Include="HtmlStyleNode.cs" />
     <Compile Include="HtmlTextNode.cs" />
     <Compile Include="HtmlWebException.cs" />
     <Compile Include="IOLibrary.cs" />
@@ -95,6 +96,11 @@
     <Compile Include="MixedCodeDocument.cs" />
     <Compile Include="HtmlCmdLine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
@@ -118,6 +124,12 @@
       <Project>{9D91C772-6ABC-4476-BD2C-81307FABD2BC}</Project>
       <Name>CSSAgilityPack</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

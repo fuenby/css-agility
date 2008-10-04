@@ -1443,7 +1443,7 @@ namespace HtmlAgilityPack
 					switch(_state)
 					{
 						case ParseState.AttributeAfterEquals:
-                            PushAttributeValueStart(_index-1);
+							PushAttributeValueStart(_index - 1);
 							break;
 
 						case ParseState.BetweenAttributes:

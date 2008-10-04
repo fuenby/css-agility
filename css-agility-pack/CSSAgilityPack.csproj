@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CSSParser.cs" />
+    <Compile Include="CSSRule.cs" />
     <Compile Include="CSSStyleDeclaration.cs" />
     <Compile Include="CSSStyleSheet.cs" />
     <Compile Include="Program.cs" />
