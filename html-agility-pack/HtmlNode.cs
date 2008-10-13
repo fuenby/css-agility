@@ -1581,17 +1581,13 @@ namespace HtmlAgilityPack
 
 								if (rootnodes > 1)
 								{
-									if (_ownerdocument.OptionOutputUpperCase)
+									foreach (HtmlNode rootNode in _ownerdocument.DocumentNode._childnodes) 
 									{
-										outText.Write("<SPAN>");
-										WriteContentTo(outText);
-										outText.Write("</SPAN>");
-									}
-									else
-									{
-										outText.Write("<span>");
-										WriteContentTo(outText);
-										outText.Write("</span>");
+										if (rootNode.NodeType == HtmlNodeType.Element)
+										{
+											rootNode.WriteTo(outText);
+											break;
+										}
 									}
 									break;
 								}
